@@ -31,7 +31,7 @@ async function main() {
   await mongoose.connect(mongoDB);
 }
 
-// Production safety features
+// Production safety features for routes and api endpoints
 app.use(compression()); // Compress all routes
 app.use(
   helmet.contentSecurityPolicy({
