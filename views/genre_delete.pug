@@ -3,7 +3,6 @@ extends layout
 block content
 
   h1 #{title}: #{genre.name}
-  p= genre.lifespan
 
   if genre_books.length
 
@@ -17,7 +16,7 @@ block content
           dd #{book.summary}
 
   else
-    p Do you really want to delete this genre?
+    p Do you really want to delete this Genre?
 
     form(method='POST')
       div.form-group

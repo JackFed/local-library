@@ -94,7 +94,7 @@ exports.genre_delete_get = asyncHandler(async (req, res, next) => {
   }
 
   res.render("genre_delete", {
-    title: "Delete genre",
+    title: "Delete Genre",
     genre: genre,
     genre_books: allBooksByGenre,
   });
@@ -112,7 +112,7 @@ exports.genre_delete_post = asyncHandler(async (req, res, next) => {
     // genre has books. Render in same way as for GET route.
     res.render("genre_delete", {
       title: "Delete genre",
-      genre: Genre,
+      genre: genre,
       genre_books: allBooksByGenre,
     });
     return;
