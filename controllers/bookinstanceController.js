@@ -127,11 +127,54 @@ exports.bookinstance_delete_post = asyncHandler(async (req, res, next) => {
 });
 
 // Display BookInstance update form on GET.
-exports.bookinstance_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance update GET");
+exports.bookinstance_update_get =  asyncHandler(async (req, res, next) => {
+  const allBooks = await Book.find({}, "title").sort({ title: 1 }).exec();
+  const bookInstance = await BookInstance.findById(req.params.id)
+    .populate("book")
+    .exec();
+
+  if (bookInstance === null) {
+    // No results.
+    const err = new Error("Book copy not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("bookinstance_form", {
+    title: "Update Book Instance",
+    book_list: allBooks,
+    bookinstance: bookInstance,
+    selected_book: bookInstance.book._id.toString(),
+  });
 });
 
 // Handle bookinstance update on POST.
 exports.bookinstance_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BookInstance update POST");
+  // Extract the validation errors from a request.
+  const errors = validationResult(req);
+
+  // Create a bookInstance object with escaped and trimmed data.
+  const bookInstance = new BookInstance({ 
+    book: req.body.book, // reference to the associated book
+    imprint: req.body.imprint,
+    status: req.body.status,
+    due_back: req.body.due_back,
+    _id: req.params.id
+   });
+
+  if (!errors.isEmpty()) {
+    // There are errors. Render the form again with sanitized values/error messages.
+    res.render("bookinstance_form", {
+      title: "Update bookInstance",
+      bookinstance: bookInstance,
+      errors: errors.array(),
+    });
+    return;
+  } else {
+    // Data from form is valid.
+    // Update the record
+    const updatedBookInstance = await BookInstance.findByIdAndUpdate(req.params.id, bookInstance);
+    // New bookInstance saved. Redirect to bookInstance detail page.
+    res.redirect(updatedBookInstance.url);
+  }
 });
